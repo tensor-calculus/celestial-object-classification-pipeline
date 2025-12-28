@@ -1,0 +1,28 @@
+services:
+  airflow:
+    build: .
+    container_name: airflow_container
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    ports:
+      - "8080:8080"
+    entrypoint: /bin/bash
+    command: -c "airflow standalone"
+
+  spark:
+    build: ./spark
+    container_name: spark_container
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/opt/spark/work-dir
+
+  postgres:
+    image: postgres:18.1
+    container_name: postgres_container
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
